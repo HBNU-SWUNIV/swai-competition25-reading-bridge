@@ -1,0 +1,76 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST}:5444/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: update
+      default_batch_fetch_size: 100
+  web:
+    resources:
+      static-locations: 
+        - classpath:/static/
+        - classpath:/public/
+        - classpath:/resources/
+        - classpath:/META-INF/resources/
+        - file:${user.home}/${UPLOAD_DIR}/
+        - file:./uploads/
+      
+app:
+  upload:
+    dir: ${user.home}/${UPLOAD_DIR}
+    
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-validity-in-seconds: 604800  # 1주일
+  refresh-token-validity-in-seconds: 2592000  # 30일
+
+kakao:
+  client:
+    id: ${KAKAO_CLIENT_ID}
+    secret: ${KAKAO_CLIENT_SECRET}
+    redirect-uri: ${KAKAO_REDIRECT_URI}
+
+server:
+  servlet:
+    context-path: /api
+  port: 8080
+  address: 0.0.0.0
+  forward-headers-strategy: framework
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  packages-to-scan: com.dyslexia.dyslexia.controller
+  default-produces-media-type: application/json
+  paths-to-match:
+    - /**
+  show-actuator: true
+
+ai:
+  api:
+    url: https://api.openai.com/v1/chat/completions
+    key: ${OPENAI_API_KEY}
+
+deepl:
+  api:
+    url: https://api-free.deepl.com
+    key: ${DEEPL_SECRET}
+    
+replicate:
+  api:
+    url: https://api.replicate.com/v1/predictions
+    key: ${REPLICATE_API_KEY}
+    model: recraft-ai/recraft-v3

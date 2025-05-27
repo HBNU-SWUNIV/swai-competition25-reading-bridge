@@ -1,0 +1,156 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table teachers {
+  id bigint [pk, increment, note: "PK, 교사 ID"]
+  client_id varchar [note: "외부 시스템 연동용 식별자"]
+  name varchar [note: "교사 이름"]
+  organization varchar [note: "소속 기관"]
+  profile_image_url varchar [note: "프로필 이미지 URL"]
+  match_code varchar [unique, note: "학생 매칭 코드"]
+  // students: 학생(1:N)
+}
+
+Table students {
+  id bigint [pk, increment, note: "PK, 학생 ID"]
+  client_id varchar [note: "외부 시스템 연동용 식별자"]
+  name varchar [note: "학생 이름"]
+  teacher_id bigint [ref: > teachers.id, note: "FK, 담당 교사"]
+  grade varchar [note: "학년(ENUM)"]
+  type varchar [note: "학생 유형"]
+  state varchar [note: "상태"]
+  profile_image_url varchar [note: "프로필 이미지 URL"]
+  default_font_size int [note: "접근성: 기본 폰트 크기"]
+  default_line_spacing float [note: "접근성: 줄 간격"]
+  default_letter_spacing float [note: "접근성: 글자 간격"]
+  default_color_scheme varchar [note: "접근성: 색상 테마(ENUM)"]
+  default_text_to_speech_enabled boolean [note: "접근성: TTS 사용 여부"]
+  default_reading_highlight_enabled boolean [note: "접근성: 읽기 강조 사용 여부"]
+  default_background_color varchar [note: "접근성: 배경색"]
+  default_text_color varchar [note: "접근성: 글자색"]
+  // interests: 관심사(N:M)
+}
+
+Table interests {
+  id bigint [pk, increment, note: "PK, 관심사 ID"]
+  name varchar [note: "관심사명"]
+}
+
+Table student_interest {
+  student_id bigint [ref: > students.id, note: "FK, 학생"]
+  interest_id bigint [ref: > interests.id, note: "FK, 관심사"]
+  // N:M 매핑 테이블
+}
+
+Table documents {
+  id bigint [pk, increment, note: "PK, 문서 ID"]
+  teacher_id bigint [ref: > teachers.id, note: "FK, 등록 교사"]
+  title varchar [note: "문서 제목"]
+  original_filename varchar [note: "원본 파일명"]
+  file_path varchar [note: "파일 경로"]
+  file_size bigint [note: "파일 크기"]
+  mime_type varchar [note: "MIME 타입"]
+  page_count int [note: "페이지 수"]
+  grade varchar [note: "권장 학년(ENUM)"]
+  subject_path varchar [note: "과목 경로"]
+  process_status varchar [note: "처리 상태(ENUM)"]
+  state varchar [note: "상태"]
+  type varchar [note: "유형"]
+  metadata text [note: "메타데이터(JSON)"]
+  created_at timestamp [note: "생성일"]
+  updated_at timestamp [note: "수정일"]
+  // pages: 페이지(1:N)
+}
+
+Table pages {
+  id bigint [pk, increment, note: "PK, 페이지 ID"]
+  document_id bigint [ref: > documents.id, note: "FK, 문서"]
+  page_number int [note: "페이지 번호"]
+  original_content text [note: "원본 텍스트"]
+  processed_content text [note: "처리된 콘텐츠(JSON)"]
+  processing_status varchar [note: "처리 상태(ENUM)"]
+  section_title varchar [note: "섹션 제목"]
+  reading_level int [note: "읽기 난이도"]
+  word_count int [note: "단어 수"]
+  complexity_score float [note: "복잡도 점수"]
+  created_at timestamp [note: "생성일"]
+  updated_at timestamp [note: "수정일"]
+  // page_tips, page_images: 1:N
+}
+
+Table page_tips {
+  id bigint [pk, increment, note: "PK, 팁 ID"]
+  page_id bigint [ref: > pages.id, note: "FK, 페이지"]
+  term varchar [note: "용어"]
+  simplified_explanation text [note: "쉬운 설명"]
+  term_position text [note: "용어 위치(JSON)"]
+  term_type varchar [note: "용어 유형(ENUM)"]
+  visual_aid_needed boolean [note: "시각 자료 필요 여부"]
+  read_aloud_text text [note: "읽어주기 텍스트"]
+  created_at timestamp [note: "생성일"]
+  updated_at timestamp [note: "수정일"]
+}
+
+Table page_images {
+  id bigint [pk, increment, note: "PK, 이미지 ID"]
+  page_id bigint [ref: > pages.id, note: "FK, 페이지"]
+  image_url varchar [note: "이미지 URL"]
+  image_type varchar [note: "이미지 유형(ENUM)"]
+  concept_reference varchar [note: "개념 참조"]
+  alt_text text [note: "대체 텍스트"]
+  position_in_page text [note: "페이지 내 위치(JSON)"]
+  created_at timestamp [note: "생성일"]
+  updated_at timestamp [note: "수정일"]
+}
+
+Table student_document_assignments {
+  id bigint [pk, increment, note: "PK, 할당 ID"]
+  student_id bigint [ref: > students.id, note: "FK, 학생"]
+  document_id bigint [ref: > documents.id, note: "FK, 문서"]
+  assigned_by bigint [ref: > teachers.id, note: "FK, 할당 교사"]
+  current_page_number int [note: "현재 페이지"]
+  assigned_at timestamp [note: "할당일"]
+  due_date timestamp [note: "마감일"]
+  notes text [note: "비고"]
+  completion_status varchar [note: "완료 상태(ENUM)"]
+  total_learning_time int [note: "총 학습 시간(초)"]
+  created_at timestamp [note: "생성일"]
+  updated_at timestamp [note: "수정일"]
+}
+
+Table student_page_progress {
+  id bigint [pk, increment, note: "PK, 진행 ID"]
+  student_id bigint [ref: > students.id, note: "FK, 학생"]
+  page_id bigint [ref: > pages.id, note: "FK, 페이지"]
+  is_completed boolean [note: "완료 여부"]
+  completion_status varchar [note: "완료 상태(ENUM)"]
+  time_spent_seconds int [note: "소요 시간(초)"]
+  retry_count int [note: "재시도 횟수"]
+  comprehension_score int [note: "이해도 점수"]
+  used_tip_ids varchar [note: "사용한 팁 ID 목록"]
+  last_accessed_at timestamp [note: "마지막 접근일"]
+  difficulty_rating smallint [note: "난이도 평가"]
+  notes text [note: "비고"]
+  created_at timestamp [note: "생성일"]
+  updated_at timestamp [note: "수정일"]
+}
+
+Table page_accessibility_settings {
+  id bigint [pk, increment, note: "PK, 접근성 설정 ID"]
+  student_id bigint [ref: > students.id, note: "FK, 학생"]
+  page_id bigint [ref: > pages.id, note: "FK, 페이지"]
+  document_id bigint [ref: > documents.id, note: "FK, 문서"]
+  font_family varchar [note: "폰트 패밀리"]
+  font_size int [note: "폰트 크기"]
+  line_spacing float [note: "줄 간격"]
+  letter_spacing float [note: "글자 간격"]
+  word_spacing float [note: "단어 간격"]
+  color_scheme varchar [note: "색상 테마(ENUM)"]
+  text_to_speech_enabled boolean [note: "TTS 사용 여부"]
+  reading_highlight_enabled boolean [note: "읽기 강조 사용 여부"]
+  custom_text_color varchar [note: "커스텀 글자색"]
+  custom_background_color varchar [note: "커스텀 배경색"]
+  last_modified_at timestamp [note: "마지막 수정일"]
+  created_at timestamp [note: "생성일"]
+  updated_at timestamp [note: "수정일"]
+}

@@ -1,0 +1,41 @@
+[
+  {
+    "id": "1",
+    "type": "HEADING1",
+    "text": "챕터 제목"
+  },
+  {
+    "id": "2",
+    "type": "TEXT",
+    "text": "본문 내용입니다. 여러 문단이 올 수 있습니다."
+  },
+  {
+    "id": "3",
+    "type": "LIST",
+    "items": ["항목1", "항목2", "항목3"]
+  },
+  {
+    "id": "4",
+    "type": "IMAGE",
+    "url": "https://example.com/image1.png",
+    "alt": "이미지 설명",
+    "width": 400,
+    "height": 300
+  },
+  {
+    "id": "5",
+    "type": "TABLE",
+    "headers": ["A", "B"],
+    "rows": [["1", "2"], ["3", "4"]]
+  },
+  {
+    "id": "6",
+    "type": "PAGE_TIP",
+    "tipId": "tip-uuid-123"
+  },
+  {
+    "id": "7",
+    "type": "PAGE_IMAGE",
+    "imageId": "img-uuid-456"
+  }
+]
