@@ -1,5 +1,8 @@
 # 📘 Global Reading Bridge
 
+<img src="./resources/title.png" width="620px" />
+<hr />
+
 > 전 세계 난독증 아동·청소년을 위한 AI 기반 맞춤형 읽기 지원 플랫폼
 
 [![React](https://img.shields.io/badge/React-19.0-61dafb?logo=react)](https://reactjs.org/)
@@ -11,7 +14,7 @@
 
 ## 🏆 SW AI 경진대회 2025
 
-**팀명**: Team 5  
+**팀명**: 나랏말싸미  
 **주제**: 난독증 아동을 위한 AI 기반 맞춤형 학습 자료 변환 플랫폼
 
 ---
